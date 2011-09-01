@@ -539,29 +539,15 @@ def python_libs_exist():
     
     """
     import sys, os
-    
     exist = False
-
     try:
         import samba
     except ImportError, error:
-        log.warning("did not find python libraries. will try to add them from the default samba install dir at /usr/local/samba/lib")
+        log.warning("Did not find python libraries")
+        return False
     else:
         log.info("python libraries are in the default python path")
-        exist = True
-        
-    if not exist and os.path.exists("/usr/local/samba/lib/python2.6/site-packages"):        
-        sys.path.append('/usr/local/samba/lib/python2.6/site-packages')
-        
-        try:
-            import samba
-        except ImportError, error:
-            log.fatal("python libs are nowhere to be found!")
-        else:
-            exist = True
-            log.info("python libraries are in samba's default install directory")
-    
-    return exist
+        return True
 
 def get_group_list():
     """ Gets this System's Groups to appear in the User/Group Selection Popup """
