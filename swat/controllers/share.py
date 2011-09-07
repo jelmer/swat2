@@ -5,16 +5,16 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
-#   
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#   
+#
 # You should have received a copy of the GNU General Public License
-# 
+#
 import logging
-from samba import param, shares, ldb
+from samba import param, hostconfig, ldb
 
 from formencode import variabledecode
 from pylons import request, response, session, tmpl_context as c
@@ -23,17 +23,22 @@ from swat.lib.base import BaseController, render
 
 from pylons.templating import render_mako_def
 from pylons.i18n.translation import _
-from swat.lib.helpers import ControllerConfiguration, DashboardConfiguration, \
-BreadcrumbTrail, SwatMessages, ParamConfiguration, filter_list
+from swat.lib.helpers import (
+    BreadcrumbTrail,
+    ControllerConfiguration,
+    ParamConfiguration,
+    SwatMessages,
+    filter_list,
+    )
 
 log = logging.getLogger(__name__)
 
 class ShareController(BaseController):
     """ Share Management controller Will handle all operations concerning
     Shares in SWAT.
-    
+
     """
-    
+
     __supported_backends = ('classic', 'ldb')
     __allowed = ('index', 'add', 'edit', 'add_assistant')
 
@@ -41,16 +46,16 @@ class ShareController(BaseController):
         """ Initialization. Load the controller's configuration, builds the
         breadcrumb trail based on that information and load the backend
         information
-        
+
         There are a few operations that don't require this initialization e.g.
         save, apply, cancel; they always redirect somewhere. therefore, there
         is a list of allowed operations that is checked to see if it's ok to
         load the configuration
-        
+
         """
         me = request.environ['pylons.routes_dict']['controller']
         action = request.environ['pylons.routes_dict']['action']
-        
+
         log.debug("Supported Backends: " + str(self.__supported_backends))
         log.debug("Controller: " + me)
         log.debug("Action: " + action)
@@ -221,59 +226,59 @@ class ShareController(BaseController):
     def apply(self):
         """ Apply changes done to a Share. This action is merely an alias for
         the save action but it redirects to the Share's edit page instead.
-        
+
         """
         self.save()
-    
+
     def cancel(self, name=''):
         """ Cancel the current editing/addition of the current Share """
         task = request.params.get("task", "edit")
-        
+
         if task == "add":
             message = _("Cancelled New Share. No Share was added!")
         elif task == "edit":
             message = _("Cancelled Share editing. No changes were saved!")
-        
+
         SwatMessages.add(message, "warning")
         redirect_to(controller='share', action='index')
-        
+
     def path(self):
         """ Returns the contents of the selected folder. Usually called via
         AJAX using the Popup that allows the user to select a path
-        
+
         """
         path = request.params.get('path', '/')
         log.debug("We want the folders in: " + path)
-        
+
         return render_mako_def('/default/component/popups.mako', \
                                'select_path', \
                                current=path)
-        
+
     def users_groups(self):
         """ Returns the HTML containing a list of the System's Users and Groups.
         Usually called via AJAX using the Popup that allows the user to select
         Users and Groups.
-        
+
         """
         already_selected = request.params.get('as', '')
         log.debug("These are selected: " + already_selected)
-        
+
         if len(already_selected) > 0:
             already_selected = already_selected.split(',')
-        
+
         return render_mako_def('/default/component/popups.mako', \
                                'select_user_group', \
                                already_selected=already_selected, shares=True)
-        
+
     def remove(self, name=''):
         """ Deletes a Share from the current Backend
-        
+
         Keyword arguments:
         name -- the name of the share to be deleted
-        
+
         """
         message = ""
-        
+
         #
         # In case we select multiple shares, the name parameter will be empty
         # because Pylons stores [] http variables in a different way
@@ -284,9 +289,9 @@ class ShareController(BaseController):
         if name is not None and len(name) > 0:
             if not isinstance(name, list):
                 name = [name]
-            
+
             log.info(str(len(name)) + " share names passed to the server to be deleted")
-      
+
             if c.samba_lp.get("share backend") in self.__supported_backends:
                 backend = globals()[self.__backend](c.samba_lp, {})
                 ok_list = []
@@ -861,7 +866,7 @@ class ShareBackendClassic(ShareBackend):
         selected backend.
         
         """
-        for share_name in shares.SharesContainer(self._lp).keys():
+        for share_name in hostconfig.SharesContainer(self._lp).keys():
             share = SambaShare(self._lp)
             share.set_share_name(share_name)
             
@@ -871,33 +876,33 @@ class ShareBackendClassic(ShareBackend):
         """ Checks if a Share exists in the Classic Backend. We reload the
         configuration file to make sure no modifications occured since we last
         loaded the file.
-        
+
         Keyword arguments:
         name -- the share name to check
-        
+
         Returns:
         True of False indicating if the Share exists or not
-        
+
         """
         slp = param.LoadParm()
         slp.load(self._lp.configfile)
-        
-        for share in shares.SharesContainer(slp).keys():
-            if share == name:        
+
+        for share in hostconfig.SharesContainer(slp).keys():
+            if share == name:
                 return True
 
         log.warning("Share " + name + " doesn't exist")
         return False
-    
+
     def store(self, name, is_new=False, old_name=''):
         """ Store a Share, either from an edit or add.
-        
+
         Breaks down the current smb.conf to find the chosen section (if editing)
         and recreates that section with the new values. Maintains comments that
         may be around that section.
-        
+
         If we are adding a new share it's just added to the end of the file
-        
+
         Keyword arguments:
         name -- Specify the name of the share to store.
         is_new -- Indicates if it's a new share (or not)
