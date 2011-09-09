@@ -38,7 +38,7 @@ description:
 ## Password
 ##
 password:
-    type: text
+    type: password
     help: "Change this User's Password. If this is a new user you must specify a new password. If you are editing a user you can leave this field empty to leave the password unchanged"
     title: "Set this User's Password"
     name: account_password
@@ -50,7 +50,7 @@ password:
 ## Confirm Password
 ##
 confirmpassword:
-    type: text
+    type: password
     help: 'Confirm the new Password you set above'
     title: 'Confirm the Password'
     name: confirm_password

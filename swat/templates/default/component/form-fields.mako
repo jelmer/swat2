@@ -35,6 +35,12 @@
     <label for="${c.p.get_value(id, "id")}" title="${c.p.get_value(id, "title")}">${c.p.get_value(id, "label")}:</label>
     ${h.text(c.p.get_value(id, "name"), value, id=c.p.get_value(id, "id"), style="float:left;", class_=c.p.get_value(id, "class") + " " + c.p.get_value(id, "validation"))}
 </%def>
+
+<%doc>Password</%doc>
+<%def name="password(id, value)">
+    <label for="${c.p.get_value(id, "id")}" title="${c.p.get_value(id, "title")}">${c.p.get_value(id, "label")}:</label>
+    ${h.password(c.p.get_value(id, "name"), value, id=c.p.get_value(id, "id"), style="float:left;", class_=c.p.get_value(id, "class") + " " + c.p.get_value(id, "validation"))}
+</%def>
     
 <%doc>Boolean</%doc>
 <%def name="checkbox(id, value)">
@@ -227,6 +233,8 @@
         permissions(id, param_value)
     elif type == "list":
         list(id, param_value)
+    elif type == "password":
+        password(id, param_value)
 
     if type != "list":
         field_ops(id, c.p.get_value(id, "field-ops"))
