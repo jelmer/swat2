@@ -15,10 +15,10 @@ setup(
     url='',
     install_requires=[
         "Pylons>=0.9.7",
-	"PyYAML>=3.0.8",
-	"Pam>=0.1.3",
-	"repoze.who-friendlyform",
-	"repoze.who"
+        "PyYAML>=3.0.8",
+        "Pam>=0.1.3",
+        "repoze.who-friendlyform",
+        "repoze.who"
     ],
     setup_requires=["PasteScript>=1.6.3"],
     packages=find_packages(exclude=['ez_setup']),
