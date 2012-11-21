@@ -1,10 +1,5 @@
 #!/usr/bin/env python
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, find_packages
+from setuptools import setup, find_packages
 
 setup(
     name='swat',
@@ -21,7 +16,7 @@ setup(
         "repoze.who"
     ],
     setup_requires=["PasteScript>=1.6.3"],
-    packages=find_packages(exclude=['ez_setup']),
+    packages=find_packages(),
     include_package_data=True,
     test_suite='nose.collector',
     package_data={'swat': ['i18n/*/LC_MESSAGES/*.mo', '../who.ini', 'config/yaml/*.yaml']},
