@@ -16,8 +16,8 @@
 import logging
 
 from formencode import variabledecode
-from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to, url_for
+from pylons import request, tmpl_context as c, url
+from pylons.controllers.util import redirect, url_for
 
 from swat.lib.base import BaseController, render
 from swat.lib.samr_manager import SAMPipeManager, User, Group
@@ -137,11 +137,11 @@ class AccountController(BaseController):
             SwatMessages.add(message, type)
             
             if subaction == "save_add":
-                redirect_to(url_for("with_subaction", controller='account', action="user", subaction="add"))
+                redirect(url_for("with_subaction", controller='account', action="user", subaction="add"))
             elif subaction == "save":
-                redirect_to(controller='account', action='user')
+                redirect(url(controller='account', action='user'))
             elif subaction == "apply":
-                redirect_to("account_action", action='user', subaction='edit', id=new_id)
+                redirect(url("account_action", action='user', subaction='edit', id=new_id))
             
         ## 
         ## Remove a Certain User or a List of Users
@@ -175,7 +175,7 @@ class AccountController(BaseController):
                 
                 SwatMessages.add(message)
                 
-            redirect_to(controller='account', action='user')
+            redirect(url(controller='account', action='user'))
             
         ##
         ## Disable a User or a List of Users
@@ -210,7 +210,7 @@ class AccountController(BaseController):
                 message = _("The following User IDs [%s] were DISABLED successfuly" % (joined))
                 SwatMessages.add(message)
                 
-            redirect_to(controller='account', action='user')
+            redirect(url(controller='account', action='user'))
 
         return render(template)
     
@@ -271,11 +271,11 @@ class AccountController(BaseController):
             SwatMessages.add(message, type)
             
             if subaction == "save_add":
-                redirect_to(url_for("with_subaction", controller='account', action="group", subaction="add"))
+                redirect(url_for("with_subaction", controller='account', action="group", subaction="add"))
             elif subaction == "save":
-                redirect_to(controller='account', action='group')
+                redirect(url(controller='account', action='group'))
             elif subaction == "apply":
-                redirect_to("account_action", action='group', subaction='edit', id=new_id)
+                redirect(url("account_action", action='group', subaction='edit', id=new_id))
             
         ## 
         ## Remove a Certain Group
@@ -296,7 +296,7 @@ class AccountController(BaseController):
                 message = _("Error deleting the Group with the ID %s - %s" % (id, cause))
                 
             SwatMessages.add(message, type)
-            redirect_to(controller='account', action='user')
+            redirect(url(controller='account', action='user'))
 
         return render(template)
         
@@ -327,7 +327,7 @@ class AccountController(BaseController):
         message = _("Editing canceled. No changes were saved.")
         SwatMessages.add(message, "warning")
         
-        redirect_to(controller='account', action=type)
+        redirect(url(controller='account', action=type))
         
     def show_groups(self):
         """ """

@@ -15,8 +15,8 @@
 # 
 import logging
 
-from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons import request, session, tmpl_context as c, url
+from pylons.controllers.util import redirect
 
 from swat.lib.base import BaseController, render
 from swat.lib.helpers import SwatMessages
@@ -45,7 +45,7 @@ class AuthenticationController(BaseController):
         handled by the repoze.who middleware
         
         """
-        redirect_to(controller = 'authentication', action = 'login')
+        redirect(url(controller = 'authentication', action = 'login'))
         
     def __authenticate(self):
         """ Performs the custom authentication. This method is required by
@@ -157,6 +157,6 @@ class AuthenticationController(BaseController):
         
         """
         if self.__authenticate():
-            redirect_to(controller='dashboard', action='index')
+            redirect(url(controller='dashboard', action='index'))
         else:
-            redirect_to(controller='authentication', action='login')
+            redirect(url(controller='authentication', action='login'))

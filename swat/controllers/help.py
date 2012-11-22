@@ -1,13 +1,11 @@
 import logging
 from samba import param
 
-from pylons import request, response, session, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons import request, tmpl_context as c
 
 from swat.lib.base import BaseController, render
 
-from swat.lib.helpers import ControllerConfiguration, BreadcrumbTrail, \
-SwatMessages
+from swat.lib.helpers import ControllerConfiguration, BreadcrumbTrail
 
 log = logging.getLogger(__name__)
 

@@ -17,8 +17,8 @@ import logging
 from samba import param, hostconfig, ldb
 
 from formencode import variabledecode
-from pylons import request, tmpl_context as c
-from pylons.controllers.util import redirect_to
+from pylons import request, tmpl_context as c, url
+from pylons.controllers.util import redirect
 from swat.lib.base import BaseController, render
 
 from pylons.templating import render_mako_def
@@ -124,7 +124,7 @@ class ShareController(BaseController):
                 message = _("Can't edit a Share that doesn't exist")
                 SwatMessages.add(message, "warning")
 
-                redirect_to(controller='share', action='index')
+                redirect(url(controller='share', action='index'))
             else:
                 c.p = ParamConfiguration('share-parameters')
 
@@ -138,7 +138,7 @@ class ShareController(BaseController):
             message = _("Your chosen backend is not yet supported")
             SwatMessages.add(message, "critical")
 
-            redirect_to(controller='share', action='index')
+            redirect(url(controller='share', action='index'))
 
     def save(self):
         """ Save a Share. We enter here either from the "edit" or "add" """
@@ -181,18 +181,18 @@ class ShareController(BaseController):
 
         if has_error or not stored:
             if is_new and len(share_name) == 0:
-                redirect_to(controller='share', action='add')
+                redirect(url(controller='share', action='add'))
             elif len(share_old_name) == 0:
-                redirect_to(controller='share', action='index')
+                redirect(url(controller='share', action='index'))
             else:
-                redirect_to(controller='share', action='edit', \
-                            name=share_old_name)
+                redirect(url(controller='share', action='edit',
+                            name=share_old_name))
         elif action == "save" and stored:
-            redirect_to(controller='share', action='index')
+            redirect(url(controller='share', action='index'))
         elif action == "apply" and stored:
-            redirect_to(controller='share', action='edit', name=share_name)
+            redirect(url(controller='share', action='edit', name=share_name))
         else:
-            redirect_to(controller='share', action='add')
+            redirect(url(controller='share', action='add'))
 
     def homes(self):
         """ Toggles the homes Share """
@@ -218,7 +218,7 @@ class ShareController(BaseController):
             SwatMessages.add(message, "critical")
             has_error = True
 
-        redirect_to(controller='share', action='index')
+        redirect(url(controller='share', action='index'))
 
     def save_add(self):
         self.save()
@@ -240,7 +240,7 @@ class ShareController(BaseController):
             message = _("Cancelled Share editing. No changes were saved!")
 
         SwatMessages.add(message, "warning")
-        redirect_to(controller='share', action='index')
+        redirect(url(controller='share', action='index'))
 
     def path(self):
         """ Returns the contents of the selected folder. Usually called via
@@ -331,12 +331,12 @@ class ShareController(BaseController):
                 message = _("Your chosen backend is not yet supported")
                 SwatMessages.add(message, "critical")
 
-            redirect_to(controller='share', action='index')
+            redirect(url(controller='share', action='index'))
         else:
             message = _("You did not choose a Share or a group of Shares to remove")
             SwatMessages.add(message, "critical")
 
-            redirect_to(controller='share', action='index')
+            redirect(url(controller='share', action='index'))
 
     def copy(self, name=''):
         """ Clones the chosen Share
@@ -399,10 +399,10 @@ class ShareController(BaseController):
                 message = _("Your chosen backend is not yet supported")
                 SwatMessages.add(message, "critical")
 
-            redirect_to(controller='share', action='index')
+            redirect(url(controller='share', action='index'))
         else:
             SwatMessages.add(_("You did not choose a Share to copy"), "critical")
-            redirect_to(controller='share', action='index')
+            redirect(url(controller='share', action='index'))
 
     def toggle(self, name=''):
         """ Toggles a Share's state (enabled/disabled).
@@ -427,7 +427,8 @@ class ShareController(BaseController):
             message = _("Your chosen backend is not yet supported")
             SwatMessages.add(message, "critical")
 
-        redirect_to(controller='share', action='index')
+        redirect(url(controller='share', action='index'))
+
 
 class ShareBackend(object):
     """ ShareBackend """
