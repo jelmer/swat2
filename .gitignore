@@ -6,3 +6,4 @@ build/*
 dist/*
 /swat/tests/backend-test-files/smb.conf.old
 *~
+swat.egg-info/*
